@@ -124,15 +124,17 @@ def normalize_location(raw_location: str) -> str:
 
     # 3. Final Cleaning (Remove duplicates and noise)
 
-    # Create a set to handle duplicates and remove noise terms efficiently
-    cleaned_set = set()
+    # Preserve order while removing duplicates and noise terms
+    seen = set()
+    cleaned_words = []
     for word in standardized_words:
-        # Filter out common noise words
-        if word not in NOISE_TERMS and len(word) > 1: # Ignore single letters (like 'a', 'i')
-            cleaned_set.add(word)
+        # Filter out common noise words and duplicates
+        if word not in NOISE_TERMS and len(word) > 1 and word not in seen:
+            cleaned_words.append(word)
+            seen.add(word)
 
-    # The result should contain unique, standardized terms, sorted for consistency
-    final_normalized = ' '.join(sorted(list(cleaned_set))).strip()
+    # The result contains unique, standardized terms in original order
+    final_normalized = ' '.join(cleaned_words).strip()
 
     # If the result is empty after cleaning, return the original raw cleaned string
     return final_normalized if final_normalized else normalized
