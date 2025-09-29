@@ -1,0 +1,8 @@
+# Kafka client for Python
+kafka-python==2.0.2
+
+# PostgreSQL adapter for Python
+psycopg2-binary==2.9.10
+
+# Environment variable management (optional but recommended)
+python-dotenv==1.1.1
