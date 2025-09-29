@@ -90,17 +90,18 @@ def call_ingest_function(job_data: dict) -> int:
         # Define the SQL call to the function deployed in Supabase
         # We use sql.Identifier and sql.Literal for safe parameter passing
         func_call = sql.SQL(
-            "SELECT {}(%s, %s, %s, %s, %s)"
+            "SELECT {}(%s, %s, %s, %s, %s, %s)"
         ).format(sql.Identifier(INGEST_FUNCTION_NAME))
 
         # Execute the function call with the job data parameters
         cur.execute(
             func_call,
             (
-                job_data['company_id'],
+                job_data['company_name'],
                 job_data['external_id'],
                 job_data['title'],
                 job_data['location'],
+                job_data['normalized_location'],
                 job_data['url']
             )
         )
@@ -155,11 +156,11 @@ def process_message(message_value: bytes):
         # Prepare data for the DB function (ensuring all required parameters are present)
         job_data = {
             'title': raw_data['title'],
-            'company_id': raw_data['company'],
+            'company_name': raw_data['company'],
             'external_id': str(raw_data['id']),  # Ensure external_id is string
             'url': raw_data['url'],
             # Ensure location is present, even if empty/None
-            'location': raw_data.get('location')
+            'location': raw_data.get('location', '')
         }
 
         # Normalize the job data to include normalized_location
